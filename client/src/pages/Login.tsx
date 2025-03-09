@@ -33,10 +33,6 @@ const Login: React.FC = () => {
         toast.success("Login successful! Redirecting...", {
           position: "top-right",
         });
-
-        setTimeout(() => {
-          navigate(role === "Hosts" ? "/hosts" : "/");
-        }, 2000);
       }
     } catch (error:any) {
       toast.error(error.response?.data?.message || "Invalid credentials", {
@@ -73,7 +69,7 @@ const Login: React.FC = () => {
         >
           <GoogleIcon /> Login with Google
         </GoogleButton>
-        <SignupLink to="/sign-up">
+        <SignupLink to="/register">
           Don't have an account? Sign up here
         </SignupLink>
       </LoginBox>
