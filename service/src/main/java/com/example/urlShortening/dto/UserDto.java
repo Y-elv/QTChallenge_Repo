@@ -1,20 +1,21 @@
 package com.example.urlShortening.dto;
 
-import lombok.Data;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 @Data
-public class AuthRequest {
+public class UserDto {
 
     @NotBlank
     private String username;
 
+    @Email
+    @NotBlank
+    private String email;
+
     @NotBlank
     private String password;
 
-    @NotBlank
-    @Email
-    private String email;
+    // Getters and Setters
 }

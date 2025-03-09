@@ -1,34 +1,31 @@
 package com.example.urlShortening.controller;
 
-import com.example.urlShortening.models.User;
-import com.example.urlShortening.util.JwtTokenUtil;
+import com.example.urlShortening.dto.*;
+import com.example.urlShortening.dto.request.AuthRequest;
+import com.example.urlShortening.dto.response.AuthResponse;
 import com.example.urlShortening.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginUser) {
-        // Find the user by username/email, validate the password, and generate a JWT token
-        String token = userService.login(loginUser);
-        return ResponseEntity.ok("Bearer " + token);
+    public AuthController(UserService userService) {
+        this.userService = userService;
     }
 
-    // Register endpoint
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public User register(@RequestBody User newUser) {
-        return userService.register(newUser);  // Calls the service method for registration
+    public ResponseEntity<ApiResponse<UserDto>> registerUser(@Valid @RequestBody UserDto userDto) {
+        return userService.registerUser(userDto);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AuthResponse>> loginUser(@Valid @RequestBody AuthRequest authRequest) {
+        return userService.loginUser(authRequest);
     }
 }
