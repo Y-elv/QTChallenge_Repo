@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>(new ApiResponse<>(false, "Invalid credentials", null, LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value()), HttpStatus.UNAUTHORIZED);
         }
 
-        String token = jwtTokenUtil.generateToken(user.getUsername());
+        String token = jwtTokenUtil.generateToken(String.valueOf(user.getId()), user.getEmail(),user.getUsername());
 
         return new ResponseEntity<>(new ApiResponse<>(true, "Login successful", new AuthResponse(token), LocalDateTime.now(), HttpStatus.OK.value()), HttpStatus.OK);
     }
