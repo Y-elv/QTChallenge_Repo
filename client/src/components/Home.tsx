@@ -4,6 +4,7 @@ import { SlArrowDown, SlArrowUp } from "react-icons/sl";
 import { MdOutlineLanguage } from "react-icons/md";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { FaLink,FaArrowRight } from "react-icons/fa";
+import Footer from "./Footer";
 
 const Home: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -127,7 +128,9 @@ const Home: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="footer"></div>
+          <div className="footer">
+            <Footer />
+          </div>
         </div>
       </div>
     </Wrapper>
@@ -187,7 +190,7 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
 
   .second-content {
     width: 100%;
-    height: 150vh;
+    height: 140vh;
     border: 1px solid green;
     background-color: #031f39;
     transition: background-color 0.3s ease;
