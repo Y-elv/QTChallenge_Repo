@@ -117,7 +117,7 @@ const LayoutContainer = styled(Layout)`
 `;
 
 const Sidebar = styled(Sider)`
-  background-color: #001529;
+  background-color: #031f39;
 `;
 
 const Logo = styled.div<{ collapsed: boolean }>`
@@ -221,7 +221,8 @@ const RightSection = styled.div`
 const ToggleButton = styled(Button)`
   font-size: 16px;
   width: 64px;
-  height: 64px;
+  height: 48px;
+ 
 `;
 
 const SearchWrapper = styled.div`
