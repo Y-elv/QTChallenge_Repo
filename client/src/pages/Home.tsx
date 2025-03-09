@@ -104,7 +104,12 @@ const Home: React.FC = () => {
               >
                 Log in
               </button>
-              <button className="get-quote">Get a Quote</button>
+              <button
+                className="get-quote"
+                onClick={() => navigate("/get-quote")}
+              >
+                Get a Quote
+              </button>
               <button className="signup" onClick={() => navigate("/register")}>
                 Sign up Free
               </button>
