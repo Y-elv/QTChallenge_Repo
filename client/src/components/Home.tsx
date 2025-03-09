@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { SlArrowDown, SlArrowUp } from "react-icons/sl";
 import { MdOutlineLanguage } from "react-icons/md";
@@ -7,6 +7,7 @@ import { TiArrowSortedDown } from "react-icons/ti";
 const Home: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [language, setLanguage] = useState<string>("EN");
+  const [scrolled, setScrolled] = useState<boolean>(false);
 
   const handleClick = (index: number) => {
     setActiveIndex(index === activeIndex ? null : index);
@@ -17,10 +18,31 @@ const Home: React.FC = () => {
     // Add functionality here to change the whole content based on the selected language
   };
 
+  // Add scroll event listener
+  useEffect(() => {
+    const firstContentHeight =
+      document.querySelector(".first-content")?.clientHeight || 0;
+
+    const handleScroll = () => {
+      if (window.scrollY > firstContentHeight) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <Wrapper>
+    <Wrapper scrolled={scrolled}>
       <div className="home">
-        <div className="first-content">
+        <div className={`first-content ${scrolled ? "hidden" : ""}`}>
           <h4>
             <span>NEW</span> Explore innovative ways to connect! Dive into
             <span className="line"> our QR Code Inspiration Gallery </span>{" "}
@@ -28,8 +50,8 @@ const Home: React.FC = () => {
           </h4>
         </div>
 
-        <div className="second-content">
-          <div className="navbar">
+        <div className={`second-content ${scrolled ? "scrolled" : ""}`}>
+          <div className={`navbar ${scrolled ? "sticky" : ""}`}>
             <div className="logo lobster-regular">
               <h2>bitly</h2>
             </div>
@@ -86,7 +108,7 @@ const Home: React.FC = () => {
 export default Home;
 
 ///// styles
-const Wrapper = styled.section`
+const Wrapper = styled.section<{ scrolled: boolean }>`
   .home {
     width: 100%;
     height: 150vh;
@@ -107,6 +129,18 @@ const Wrapper = styled.section`
     justify-content: center;
     align-items: center;
     text-align: center;
+    transition: all 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .first-content.hidden {
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
   }
 
   .first-content span {
@@ -127,7 +161,13 @@ const Wrapper = styled.section`
     height: 100vh;
     border: 1px solid green;
     background-color: #031f39;
+    transition: background-color 0.3s ease;
   }
+
+  .second-content.scrolled {
+    padding-top: 12vh; /* Same as navbar height */
+  }
+
   .navbar {
     width: 100%;
     height: 12vh;
@@ -136,15 +176,29 @@ const Wrapper = styled.section`
     align-items: center;
     justify-content: space-around;
     padding: 0 20px;
+    transition: all 0.3s ease;
+    z-index: 1000;
   }
+
+  .navbar.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: white;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #e0e0e0;
+  }
+
   .logo {
     color: #ee6123;
     font-size: 2em; /* Increase font size for larger logo */
   }
+
   .links {
     display: flex;
     gap: 30px;
   }
+
   .nav-link {
     display: flex;
     align-items: center;
@@ -153,7 +207,13 @@ const Wrapper = styled.section`
     font-size: 1.1em;
     font-weight: bold;
     gap: 5px;
+    transition: color 0.3s ease;
   }
+
+  .sticky .nav-link {
+    color: #031f39;
+  }
+
   .languages {
     position: relative;
     display: flex;
@@ -162,10 +222,17 @@ const Wrapper = styled.section`
     font-size: 1.1em;
     gap: 5px;
     cursor: pointer;
+    transition: color 0.3s ease;
   }
+
+  .sticky .languages {
+    color: #031f39;
+  }
+
   .languages:hover .dropdown-content {
     display: block;
   }
+
   .dropdown-content {
     display: none;
     position: absolute;
@@ -176,11 +243,13 @@ const Wrapper = styled.section`
     min-width: 200px;
     border-radius: 3px;
   }
+
   .languages:hover {
-    background-color: #575757;
+    background-color: ${(props) => (props.scrolled ? "#f0f0f0" : "#575757")};
     padding: 3px 3px;
     border-radius: 3px;
   }
+
   .dropdown-item {
     color: #575757;
     padding: 8px 12px;
@@ -189,10 +258,12 @@ const Wrapper = styled.section`
     text-align: left;
     cursor: pointer;
   }
+
   .dropdown-item:hover {
     background-color: #575757;
     color: white;
   }
+
   .btn {
     display: flex;
     gap: 20px;
@@ -204,6 +275,11 @@ const Wrapper = styled.section`
     border: none;
     color: white;
     cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .sticky .log-in {
+    color: #031f39;
   }
 
   .btn button {
@@ -213,10 +289,11 @@ const Wrapper = styled.section`
     width: 8vw;
     border-radius: 10px;
     font-weight: 600;
+    transition: all 0.3s ease;
   }
 
   .log-in:hover {
-    background-color: #6395c4;
+    background-color: ${(props) => (props.scrolled ? "#f0f0f0" : "#6395c4")};
   }
 
   .transparent-btn {
@@ -224,7 +301,13 @@ const Wrapper = styled.section`
     border: none;
     color: white;
     cursor: pointer;
+    transition: color 0.3s ease;
   }
+
+  .sticky .transparent-btn {
+    color: #031f39;
+  }
+
   .lobster-regular {
     font-family: "Lobster", sans-serif;
     font-weight: 400;
@@ -235,17 +318,34 @@ const Wrapper = styled.section`
     background-color: white;
     color: #031f39;
   }
+
+  .sticky .signup {
+    background-color: #031f39;
+    color: white;
+  }
+
   .signup:hover {
     background-color: #6395c4;
     border: none;
+    color: white;
   }
+
   .get-quote {
     color: white;
     background-color: #031f39;
     border: 2px solid white;
+    transition: all 0.3s ease;
   }
+
+  .sticky .get-quote {
+    color: #031f39;
+    background-color: white;
+    border: 2px solid #031f39;
+  }
+
   .get-quote:hover {
     background-color: #6395c4;
+    color: white;
     border: none;
   }
 `;
