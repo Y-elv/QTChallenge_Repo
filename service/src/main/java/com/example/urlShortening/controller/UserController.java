@@ -24,4 +24,5 @@ public class UserController {
     public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers() {
         return userService.getAllUsers();
     }
+
 }

@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers() {
         List<UserDto> users = userRepository.findAll().stream().map(user -> {
+            //help me to remove password in response
             UserDto userDto = new UserDto();
             userDto.setUsername(user.getUsername());
             userDto.setEmail(user.getEmail());

@@ -1,7 +1,8 @@
 package com.example.urlShortening.filter;
 
-import com.example.urlShortening.dto.ApiResponse;
 import com.example.urlShortening.exception.CustomException;
+import com.example.urlShortening.exception.ErrorResponse;
+import com.example.urlShortening.services.TokenService;
 import com.example.urlShortening.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -36,6 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
+                if (tokenService.isTokenInvalid(jwt)) {
+                    throw new CustomException("Invalid JWT token", HttpStatus.UNAUTHORIZED);
+                }
                 username = jwtTokenProvider.extractUsername(jwt);
             }
 
@@ -51,16 +59,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             chain.doFilter(request, response);
         } catch (CustomException ex) {
-            setErrorResponse(response, ex.getStatus(), ex.getMessage());
+            setErrorResponse(request, response, ex.getStatus(), ex.getMessage());
         } catch (Exception ex) {
-            setErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while processing the JWT token");
+            setErrorResponse(request, response, HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while processing the JWT token");
         }
     }
 
-    private void setErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
-        ApiResponse<Object> apiResponse = ApiResponse.error(message, status);
+    private void setErrorResponse(HttpServletRequest request, HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .success(false)
+                .message(message)
+                .timestamp(LocalDateTime.now())
+                .statusCode(status.value())
+                .error(status.getReasonPhrase())
+                .path(request.getRequestURI())
+                .build();
         response.setStatus(status.value());
         response.setContentType("application/json");
-        response.getWriter().write(apiResponse.toString());
+        response.getWriter().write(errorResponse.toString());
     }
 }
