@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { SlArrowDown, SlArrowUp } from "react-icons/sl";
 import { MdOutlineLanguage } from "react-icons/md";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { FaLink,FaArrowRight } from "react-icons/fa";
 
 const Home: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -99,6 +100,34 @@ const Home: React.FC = () => {
               <button className="signup">Sign up Free</button>
             </div>
           </div>
+          <div className="middle-content">
+            <h1>Build stronger digital connections</h1>
+            <h4>
+              Use our URL shortener, QR Codes, and landing pages to engage your
+              audience and connect them to the right information. Build, edit,
+              and track everything inside the Bitly Connections Platform.
+            </h4>
+            <div className="tag">
+              <FaLink className="FaLinkStyled" />
+              <p>Short Link</p>
+            </div>
+          </div>
+          <div className="url-input-content">
+            <div className="url-input-card">
+              <h2>Shorten a long link</h2>
+              <p>No credit card required.</p>
+              <label>Paste your long link here</label>
+              <input
+                type="text"
+                defaultValue="https://example.com/my-long-url"
+              />
+              <button className="icon-btn">
+                Get your link for Free
+                <FaArrowRight className="icon" />
+              </button>
+            </div>
+          </div>
+          <div className="footer"></div>
         </div>
       </div>
     </Wrapper>
@@ -158,7 +187,7 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
 
   .second-content {
     width: 100%;
-    height: 100vh;
+    height: 150vh;
     border: 1px solid green;
     background-color: #031f39;
     transition: background-color 0.3s ease;
@@ -347,5 +376,119 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
     background-color: #6395c4;
     color: white;
     border: none;
+  }
+  .middle-content {
+    width: 100%;
+    height: 50vh;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #e0e0e0;
+    gap: 2em;
+  }
+  .middle-content h1 {
+    font-size: 50px;
+  }
+  .middle-content h4 {
+    font-size: 20px;
+    font-weight: lighter;
+    width: 80%;
+    height: 20vh;
+    border: 1px solid red;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+      "Lucida Sans", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    text-align: center; /* Centers text horizontally */
+  }
+  .tag {
+    height: 10vh;
+    width: 10vw;
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .tag:hover {
+    background-color: #cedafa;
+  }
+  .tag p {
+    color: black;
+    font-weight: bold;
+  }
+  .FaLinkStyled {
+    color: #ee6123;
+  }
+  .url-input-content {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    margin-top: 30px;
+    align-items: center;
+    border: 1px solid red;
+    width: 100%;
+    height: 70vh;
+  }
+  .url-input-card {
+    border: 1px solid black;
+    height: 60vh;
+    width: 70%;
+    padding: 5px;
+    background-color: white;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 10px 0px 10px 30px;
+  }
+
+  .url-input-card h2 {
+    font-size: 30px;
+  }
+  .url-input-card input {
+    font-size: 27px; /* Adjust the font size as needed */
+    width: 80%;
+    border: 1px solid #6395c4;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  .url-input-card p {
+    font-size: 20px;
+  }
+  .url-input-card button {
+    font-size: 20px;
+    width: 27%;
+    height: 8vh;
+    align-items: center;
+    padding: 5px;
+    border-radius: 10px;
+  }
+  .url-input-card label {
+  font-weight:bold;
+  }
+  .icon-btn {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    font-weight: bolder;
+    background-color: #6395c4;
+    color: white;
+    border: none;
+  }
+  .icon-btn:hover {
+    background-color: white;
+    color: #6395c4;
+    border: 2px solid #6395c4;
+    cursor: pointer;
   }
 `;
