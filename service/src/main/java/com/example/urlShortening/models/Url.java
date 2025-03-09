@@ -2,6 +2,8 @@ package com.example.urlShortening.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 import jakarta.persistence.*;
 
@@ -27,4 +29,7 @@ public class Url {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // Ensure User is an @Entity and properly imported.
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }

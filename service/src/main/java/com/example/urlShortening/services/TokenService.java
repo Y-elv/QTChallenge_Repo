@@ -1,6 +1,8 @@
 package com.example.urlShortening.services;
 
+import com.example.urlShortening.dto.ApiResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,5 +18,10 @@ public class TokenService {
 
     public boolean isTokenInvalid(String token) {
         return tokenBlacklist.contains(token);
+    }
+
+    public ResponseEntity<ApiResponse<Void>> logoutUser(String token) {
+        invalidateToken(token);
+        return ResponseEntity.ok(ApiResponse.success("Logout successful", null));
     }
 }
