@@ -70,7 +70,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
+                    .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token);
             return true;

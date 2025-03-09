@@ -1,7 +1,10 @@
 package com.example.urlShortening.filter;
 
+import com.example.urlShortening.dto.ApiResponse;
+import com.example.urlShortening.exception.CustomException;
 import com.example.urlShortening.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,21 +33,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            username = jwtTokenProvider.extractUsername(jwt);
-        }
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            if (jwtTokenProvider.validateToken(jwt)) {
-                UserDetails userDetails = (UserDetails) jwtTokenProvider.getAuthentication(jwt).getPrincipal();
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                jwt = authorizationHeader.substring(7);
+                username = jwtTokenProvider.extractUsername(jwt);
             }
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                if (jwtTokenProvider.validateToken(jwt)) {
+                    UserDetails userDetails = (UserDetails) jwtTokenProvider.getAuthentication(jwt).getPrincipal();
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+            chain.doFilter(request, response);
+        } catch (CustomException ex) {
+            setErrorResponse(response, ex.getStatus(), ex.getMessage());
+        } catch (Exception ex) {
+            setErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while processing the JWT token");
         }
-        chain.doFilter(request, response);
+    }
+
+    private void setErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        ApiResponse<Object> apiResponse = ApiResponse.error(message, status);
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.getWriter().write(apiResponse.toString());
     }
 }
