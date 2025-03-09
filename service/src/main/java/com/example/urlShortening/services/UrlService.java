@@ -52,7 +52,7 @@ public class UrlService {
 
     public ResponseEntity<ApiResponse<Url>> getUrl(String shortUrl, String token) {
         String userId = jwtTokenProvider.extractUserId(token);
-        Url url = urlRepository.findByShortUrl(shortUrl)
+        Url url = urlRepository.findById(UUID.fromString(shortUrl))
                 .orElseThrow(() -> new CustomException("URL not found", HttpStatus.NOT_FOUND));
 
         if (!url.getUser().getId().toString().equals(userId)) {
@@ -94,7 +94,8 @@ public class UrlService {
 
             // Handle collisions - if the short URL already exists for a different long URL
             int attempts = 0;
-            while (urlRepository.findByShortUrl(shortUrl).isPresent()) {
+            System.out.println("i can even reach here ");
+            while (urlRepository.findByShortUrl(UUID.fromString(shortUrl)).isPresent()) {
                 // Add a suffix based on attempt number
                 shortUrl = shortCode.toString() + base62Chars.charAt(attempts % 62);
                 attempts++;
