@@ -3,10 +3,12 @@ import styled from "styled-components";
 import { SlArrowDown, SlArrowUp } from "react-icons/sl";
 import { MdOutlineLanguage } from "react-icons/md";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { FaLink,FaArrowRight } from "react-icons/fa";
-import Footer from "./Footer";
+import { FaLink, FaArrowRight } from "react-icons/fa";
+import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
+   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [language, setLanguage] = useState<string>("EN");
   const [scrolled, setScrolled] = useState<boolean>(false);
@@ -96,9 +98,16 @@ const Home: React.FC = () => {
               </div>
             </div>
             <div className="btn">
-              <button className="log-in transparent-btn">Log in</button>
+              <button
+                className="log-in transparent-btn"
+                onClick={() => navigate("/login")}
+              >
+                Log in
+              </button>
               <button className="get-quote">Get a Quote</button>
-              <button className="signup">Sign up Free</button>
+              <button className="signup" onClick={() => navigate("/register")}>
+                Sign up Free
+              </button>
             </div>
           </div>
           <div className="middle-content">
@@ -477,7 +486,7 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
     border-radius: 10px;
   }
   .url-input-card label {
-  font-weight:bold;
+    font-weight: bold;
   }
   .icon-btn {
     display: flex;
