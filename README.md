@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to the URL Shortener Web App! This project implements a full-stack URL shortener web application with a modern UI, secure authentication, and a scalable backend similar to Bit.ly. Users can register, log in, shorten URLs, and view analytics for their shortened URLs.
+Welcome to the URL Shortener Web App! This project implements a full-stack URL shortener web application with a modern UI, secure authentication, and a scalable backend . Users can register, log in, shorten URLs, and view analytics for their shortened URLs.
 
 ## Features & Requirements
 
