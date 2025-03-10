@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+
 public interface UrlRepository extends JpaRepository<Url, UUID> {
     Optional<Url> findByShortUrl(UUID shortUrl);
     List<Url> findByUserId(UUID userId);

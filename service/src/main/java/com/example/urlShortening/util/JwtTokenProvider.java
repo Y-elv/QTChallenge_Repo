@@ -2,6 +2,7 @@ package com.example.urlShortening.util;
 
 import com.example.urlShortening.exception.CustomException;
 import com.example.urlShortening.models.User;
+import com.example.urlShortening.services.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -34,10 +35,10 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-token.expiration}")
     private long refreshExpiration;
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl UserDetailsServiceImpl;
 
-    public JwtTokenProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public JwtTokenProvider(UserDetailsServiceImpl UserDetailsServiceImpl) {
+        this.UserDetailsServiceImpl = UserDetailsServiceImpl;
     }
 
     public String generateToken(User user) {
@@ -94,7 +95,7 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         String username = extractUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = UserDetailsServiceImpl.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
