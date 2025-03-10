@@ -1,7 +1,9 @@
 package com.example.urlShortening.config;
 
 import com.example.urlShortening.filter.JwtAuthenticationFilter;
+import com.example.urlShortening.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +28,15 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;
+
+
+    @Autowired
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userDetailsService = userDetailsService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
