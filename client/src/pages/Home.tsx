@@ -217,7 +217,6 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
   .navbar {
     width: 100%;
     height: 12vh;
-    border: 1px solid red;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -363,6 +362,9 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
   .signup {
     background-color: white;
     color: #031f39;
+    height: 7vh;
+    width: 8vw;
+    
   }
 
   .sticky .signup {
@@ -413,7 +415,6 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
     font-weight: lighter;
     width: 80%;
     height: 20vh;
-    border: 1px solid red;
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
       "Lucida Sans", Arial, sans-serif;
     display: flex;
@@ -450,12 +451,10 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
     justify-content: center;
     margin-top: 30px;
     align-items: center;
-    border: 1px solid red;
     width: 100%;
     height: 70vh;
   }
   .url-input-card {
-    border: 1px solid black;
     height: 60vh;
     width: 70%;
     padding: 5px;
@@ -484,8 +483,8 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
   }
   .url-input-card button {
     font-size: 20px;
-    width: 27%;
-    height: 8vh;
+    width: 29%;
+    height: 9vh;
     align-items: center;
     padding: 5px;
     border-radius: 10px;
