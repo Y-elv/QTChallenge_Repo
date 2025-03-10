@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,8 +25,8 @@ const Login: React.FC = () => {
         const token  = response.data.result.token;
         localStorage.setItem("token", token);
 
-        const base64Url = token.split(".")[1];
-        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        
+        
         
         toast.success("Login successful! Redirecting...", {
           position: "top-right",
