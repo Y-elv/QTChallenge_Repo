@@ -361,7 +361,7 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
 
   .signup {
     background-color: white;
-    font-size:13px;
+    font-size:12px;
     color: #031f39;
   }
 
