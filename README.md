@@ -14,7 +14,7 @@ Welcome to the URL Shortener Web App! This project implements a full-stack URL s
 ### Frontend
 - **UI Components**:
   - Login & Register pages with form validation.
-  - Landing Page: A simple webpage resembling [Bit.ly](https://bitly.com/).
+  - Landing Page: A simple webpage.
   - Dashboard for authenticated users to manage shortened URLs.
   - URL Shortening Page with an input field & copy button.
   - URL Analytics Page showing clicks & usage stats.
