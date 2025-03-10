@@ -12,10 +12,12 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}  # Corrected to 'db'
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     restart: unless-stopped
+    networks:
+      - url-shortening-network  # Added network for both services
 
   db:
     image: postgres:14-alpine
@@ -36,6 +38,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - url-shortening-network  # Added network for both services
 
 volumes:
   postgres_data:
+
+networks:
+  url-shortening-network:
+    driver: bridge  # Defining the network
