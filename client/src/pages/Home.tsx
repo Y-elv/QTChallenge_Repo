@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [language, setLanguage] = useState<string>("EN");
   const [scrolled, setScrolled] = useState<boolean>(false);
@@ -361,10 +361,8 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
 
   .signup {
     background-color: white;
+    font-size:13px;
     color: #031f39;
-    height: 7vh;
-    width: 8vw;
-    
   }
 
   .sticky .signup {
@@ -482,8 +480,8 @@ const Wrapper = styled.section<{ scrolled: boolean }>`
     font-size: 20px;
   }
   .url-input-card button {
-    font-size: 20px;
-    width: 29%;
+    font-size: 18px;
+    width: 28%;
     height: 9vh;
     align-items: center;
     padding: 5px;
