@@ -12,7 +12,6 @@ import styled from "styled-components";
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
-const { Search } = Input;
 
 // Enhanced content components for each menu item
 const CreateContent: React.FC = () => (

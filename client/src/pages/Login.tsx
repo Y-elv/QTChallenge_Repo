@@ -11,7 +11,7 @@ import styled from "styled-components";
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const navigate = useNavigate();
+
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,9 +27,7 @@ const Login: React.FC = () => {
 
         const base64Url = token.split(".")[1];
         const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-        const decodedPayload = JSON.parse(atob(base64));
-        const role: string = decodedPayload?.role || "";
-
+        
         toast.success("Login successful! Redirecting...", {
           position: "top-right",
         });

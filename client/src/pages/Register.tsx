@@ -6,6 +6,78 @@ import "react-toastify/dist/ReactToastify.css";
 import BaseUrl from "../utils/config";
 import styled from "styled-components";
 
+
+const Register: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`${BaseUrl}/users`, {
+        email,
+        password,
+        name,
+      });
+
+      if (response.status === 201) {
+        toast.success("SignUp successful! Go to Gmail to verify your email.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      } else {
+        throw new Error("Unexpected response status");
+      }
+    } catch (error: any) {
+      console.error("SignUp Error:", error);
+      toast.error(
+        error.response?.data?.message || "Something went wrong, try again.",
+        { position: "top-right" }
+      );
+    }
+  };
+
+  return (
+    <Container>
+      <Box>
+        <Title>Welcome</Title>
+        <Subtitle>Sign Up to continue</Subtitle>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <Button type="submit">SignUp</Button>
+        </Form>
+        <StyledLink to="/login">Have an account? Login here</StyledLink>
+      </Box>
+    </Container>
+  );
+};
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -92,75 +164,5 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const Register: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(`${BaseUrl}/users`, {
-        email,
-        password,
-        name,
-      });
-
-      if (response.status === 201) {
-        toast.success("SignUp successful! Go to Gmail to verify your email.", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 3000);
-      } else {
-        throw new Error("Unexpected response status");
-      }
-    } catch (error: any) {
-      console.error("SignUp Error:", error);
-      toast.error(
-        error.response?.data?.message || "Something went wrong, try again.",
-        { position: "top-right" }
-      );
-    }
-  };
-
-  return (
-    <Container>
-      <Box>
-        <Title>Welcome</Title>
-        <Subtitle>Sign Up to continue</Subtitle>
-        <Form onSubmit={handleSubmit}>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <Button type="submit">SignUp</Button>
-        </Form>
-        <StyledLink to="/login">Have an account? Login here</StyledLink>
-      </Box>
-    </Container>
-  );
-};
 
 export default Register;
