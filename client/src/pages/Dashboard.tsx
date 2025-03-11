@@ -10,6 +10,9 @@ import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { CloseOutlined } from "@ant-design/icons";
 import styled from "styled-components";
+import BaseUrl from "../utils/config";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
@@ -284,11 +287,58 @@ const Dashboard: React.FC = () => {
 
   console.log("User Data:", userData);
 
-  // Dropdown menu items
+  const handleLogout = async () => {
+  try {
+    console.log("Attempting logout...");
+
+    // Get the token from localStorage
+    const token = localStorage.getItem("token");
+
+    // Set up the request with the Authorization header
+    const response = await axios.post(
+      `${BaseUrl}/auth/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      console.log("Logout successful", response);
+      localStorage.removeItem("token"); // Clear the token from localStorage
+
+      toast.success("Logout successful! Redirecting...", {
+        position: "top-right",
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 3000); // 3 seconds delay// Navigate to the root path
+    }
+  } catch (error) {
+    console.error("Logout Error:", error);
+
+    // Even if the request fails, we might want to log the user out locally
+    localStorage.removeItem("token");
+
+    toast.error(
+      "Logout process encountered an issue, but you've been logged out locally.",
+      {
+        position: "top-right",
+      }
+    );
+
+    navigate("/"); // Navigate to the root path anyway
+  }
+};
+
+  // Then use it in your dropdown items array
   const dropdownItems = [
     { key: "1", label: "Profile" },
     { key: "2", label: "Settings" },
-    { key: "3", label: "Logout" },
+    { key: "3", label: "Logout", onClick: () => handleLogout() },
   ];
 
   // Menu items configuration
@@ -397,6 +447,7 @@ const Dashboard: React.FC = () => {
                 items: dropdownItems.map((item) => ({
                   key: item.key,
                   label: item.label,
+                  onClick: item.onClick, // Add this line to pass the onClick handler
                 })),
               }}
               trigger={["click"]}
