@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-hot-toast";
 import BaseUrl from "../utils/config";
 import styled from "styled-components";
 
@@ -24,7 +23,6 @@ const Register: React.FC = () => {
       if (response.status === 201) {
         toast.success("SignUp successful !", {
           position: "top-right",
-          autoClose: 3000,
         });
 
         setTimeout(() => {
