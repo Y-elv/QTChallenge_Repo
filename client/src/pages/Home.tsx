@@ -6,6 +6,7 @@ import { TiArrowSortedDown } from "react-icons/ti";
 import { FaLink, FaArrowRight } from "react-icons/fa";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -20,6 +21,29 @@ const Home: React.FC = () => {
   const changeLanguage = (lang: string) => {
     setLanguage(lang);
     // Add functionality here to change the whole content based on the selected language
+  };
+
+  const handleGetLink = (): void => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // User is logged in, proceed with getting the link
+      console.log("Getting user link...");
+      // Add your link generation logic here
+    } else {
+      // User is not logged in
+      toast.error(
+        "Please log in to get your link. Redirecting...",
+        {
+          position: "top-right",
+        }
+      );
+
+      // Redirect to login page after delay
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
+    }
   };
 
   // Add scroll event listener
@@ -136,7 +160,7 @@ const Home: React.FC = () => {
                 type="text"
                 defaultValue="https://example.com/my-long-url"
               />
-              <button className="icon-btn">
+              <button className="icon-btn" onClick={handleGetLink}>
                 Get your link for Free
                 <FaArrowRight className="icon" />
               </button>
