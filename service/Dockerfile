@@ -12,6 +12,12 @@ RUN mvn clean package -DskipTests -q
 # Runtime stage
 FROM eclipse-temurin:21-jre
 WORKDIR /app
+
+# Copy the built JAR file from the builder stage
 COPY --from=builder /build/target/*.jar app.jar
+
+# Expose the application port
 EXPOSE 8080
+
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
