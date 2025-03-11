@@ -1,4 +1,4 @@
 // src/utils/config.js
-const BaseUrl = "http://localhost:8000/api/v1";
+const BaseUrl = "https://qtchallenge-repo.onrender.com/api/v1";
 
 export default BaseUrl;

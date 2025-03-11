@@ -1,38 +1,40 @@
 import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-hot-toast";
 import BaseUrl from "../utils/config";
 import styled from "styled-components";
-
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response :any  = await axios.post(`${BaseUrl}/users/login`, {
+      const response: any = await axios.post(`${BaseUrl}/auth/login`, {
         email,
         password,
       });
+      console.log("password, email", password, email);
 
       if (response.status === 200) {
-        const token  = response.data.result.token;
+        console.log("am here ", response);
+        const token = response.data.data.token;
         localStorage.setItem("token", token);
 
-        
-        
-        
         toast.success("Login successful! Redirecting...", {
           position: "top-right",
         });
+
+        // Delay before redirecting to the dashboard
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 3000); // 3 seconds delay
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error.response?.data?.message || "Invalid credentials", {
         position: "top-right",
       });

@@ -6,24 +6,23 @@ import "react-toastify/dist/ReactToastify.css";
 import BaseUrl from "../utils/config";
 import styled from "styled-components";
 
-
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [name, setName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BaseUrl}/users`, {
+      const response = await axios.post(`${BaseUrl}/auth/register`, {
         email,
         password,
-        name,
+        username,
       });
 
       if (response.status === 201) {
-        toast.success("SignUp successful! Go to Gmail to verify your email.", {
+        toast.success("SignUp successful !", {
           position: "top-right",
           autoClose: 3000,
         });
@@ -65,9 +64,9 @@ const Register: React.FC = () => {
           />
           <Input
             type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
           <Button type="submit">SignUp</Button>
@@ -163,6 +162,5 @@ const StyledLink = styled(Link)`
     text-decoration: underline;
   }
 `;
-
 
 export default Register;
