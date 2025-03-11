@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout, Button, Tooltip, Input, Dropdown } from "antd";
 import { MdOutlineAdd } from "react-icons/md";
@@ -242,11 +243,46 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Mock user data
-  const userData = {
-    firstName: "M",
-    fullName: "MUGISHA ELVIS",
+  // Define the type for the decoded token
+  interface DecodedToken {
+    username?: string; // Ensure it matches the actual token structure
+    exp?: number; // Token expiration (optional)
+  }
+
+  // Function to get user data from token
+  const getUserFromToken = (): DecodedToken | null => {
+    const token = localStorage.getItem("token");
+
+    if (!token) return null;
+
+    try {
+      const decoded: DecodedToken = jwtDecode(token);
+      return decoded;
+    } catch (error) {
+      console.error("Invalid token:", error);
+      return null;
+    }
   };
+
+  // Get user details from token
+  const userFromToken = getUserFromToken();
+
+  // Function to capitalize the full name
+  const capitalizeFullName = (text?: string): string | undefined => {
+    return text
+      ? text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
+      : undefined;
+  };
+
+  // Extract and transform user data
+  const userData = {
+    firstName: userFromToken?.username
+      ? userFromToken.username.charAt(0).toUpperCase()
+      : undefined,
+    fullName: capitalizeFullName(userFromToken?.username),
+  };
+
+  console.log("User Data:", userData);
 
   // Dropdown menu items
   const dropdownItems = [
