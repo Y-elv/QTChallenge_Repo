@@ -36,6 +36,7 @@ public class UrlService {
 
     public ResponseEntity<ApiResponse<Url>> shortenUrl(UrlRequest urlRequest, String token) {
         String userId = jwtTokenProvider.extractUserId(token);
+        System.out.println("userId" +userId);
         User user = userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -69,11 +70,13 @@ public class UrlService {
     }
 
     private String generateShortUrl(String longUrl) {
+        String domain = "https://bitly.gq/"; // Replace with your actual domain
+
         try {
             // Check if we already have a short URL for this long URL
             Optional<Url> existingUrl = urlRepository.findByLongUrl(longUrl);
             if (existingUrl.isPresent()) {
-                return existingUrl.get().getShortUrl();
+                return domain + existingUrl.get().getShortUrl();
             }
 
             // Create a MessageDigest instance for MD5
@@ -94,8 +97,7 @@ public class UrlService {
 
             // Handle collisions - if the short URL already exists for a different long URL
             int attempts = 0;
-            System.out.println("i can even reach here ");
-            while (urlRepository.findByShortUrl(UUID.fromString(shortUrl)).isPresent()) {
+            while (urlRepository.findByShortUrl(shortUrl).isPresent()) {
                 // Add a suffix based on attempt number
                 shortUrl = shortCode.toString() + base62Chars.charAt(attempts % 62);
                 attempts++;
@@ -108,7 +110,7 @@ public class UrlService {
                 }
             }
 
-            return shortUrl;
+            return domain + shortUrl;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Failed to generate short URL", e);
         }

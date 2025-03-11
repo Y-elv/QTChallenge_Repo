@@ -10,7 +10,7 @@ import java.util.UUID;
 
 
 public interface UrlRepository extends JpaRepository<Url, UUID> {
-    Optional<Url> findByShortUrl(UUID shortUrl);
+    Optional<Url> findByShortUrl(String shortUrl);
     List<Url> findByUserId(UUID userId);
     Optional<Url> findByLongUrl(String longUrl);
 
