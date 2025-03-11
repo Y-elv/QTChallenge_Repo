@@ -154,18 +154,6 @@ const SettingsContent: React.FC = () => (
             />
             Email notifications
           </label>
-          <label style={{ display: "flex", alignItems: "center" }}>
-            <input
-              type="checkbox"
-              defaultChecked
-              style={{ marginRight: "8px" }}
-            />
-            Weekly reports
-          </label>
-          <label style={{ display: "flex", alignItems: "center" }}>
-            <input type="checkbox" style={{ marginRight: "8px" }} />
-            Marketing communications
-          </label>
         </div>
       </SettingsSection>
     </div>
