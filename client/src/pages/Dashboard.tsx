@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout, Button, Tooltip, Input, Dropdown } from "antd";
@@ -89,23 +89,23 @@ const CreateContent: React.FC = () => {
       <Subtitle>
         Paste a long URL to create a shorter, more manageable link:
       </Subtitle>
-        <FormSection>
-          <StyledInput
-            placeholder="https://example.com/very/long/url/that/needs/shortening"
-            value={longUrl}
-            onInput={(e: any) => {
-              console.log("Input event value:", e.target.value);
-              setLongUrl(e.target.value);
-            }}
-          />
-          <StyledButton
-            type="primary"
-            onClick={handleShortenUrl}
-            disabled={loading}
-          >
-            {loading ? "Shortening..." : "Shorten URL"}
-          </StyledButton>
-        </FormSection>
+      <FormSection>
+        <StyledInput
+          placeholder="https://example.com/very/long/url/that/needs/shortening"
+          value={longUrl}
+          onInput={(e: any) => {
+            console.log("Input event value:", e.target.value);
+            setLongUrl(e.target.value);
+          }}
+        />
+        <StyledButton
+          type="primary"
+          onClick={handleShortenUrl}
+          disabled={loading}
+        >
+          {loading ? "Shortening..." : "Shorten URL"}
+        </StyledButton>
+      </FormSection>
 
       {shortenedUrl && (
         <ResultSection>
@@ -624,21 +624,8 @@ const StyledButton = styled(Button)`
   }
 `;
 
-
-
 const FormSection = styled.div`
   margin-top: 24px;
-`;
-
-const StyledTextArea = styled(Input.TextArea)`
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #d9d9d9;
-  &:focus {
-    border-color: #ee6123;
-    box-shadow: 0 0 0 2px rgba(238, 97, 35, 0.2);
-  }
 `;
 
 const LayoutContainer = styled(Layout)`
