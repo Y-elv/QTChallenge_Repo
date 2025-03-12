@@ -8,6 +8,7 @@ import com.example.urlShortening.models.User;
 import com.example.urlShortening.repositories.UrlRepository;
 import com.example.urlShortening.repositories.UserRepository;
 import com.example.urlShortening.util.JwtTokenProvider;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,13 +38,26 @@ public class UrlService {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    private static final Logger logger = LoggerFactory.getLogger(UrlService.class);
+
     public ResponseEntity<ApiResponse<Url>> shortenUrl(UrlRequest urlRequest, String token) {
         String userId = jwtTokenProvider.extractUserId(token);
-        System.out.println("userId" +userId);
-        User user = userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        logger.debug("Extracted userId: {}", userId);
 
-        // Create new Url entity from the request DTO
+        if (userId == null || !userId.matches("^[0-9a-fA-F-]{36}$")) {
+            logger.error("Invalid UUID format: {}", userId);
+            throw new IllegalArgumentException("Invalid UUID format: " + userId);
+        }
+
+        UUID userUUID = UUID.fromString(userId);
+        User user = userRepository.findById(userUUID)
+                .orElseThrow(() -> {
+                    logger.error("User not found for UUID: {}", userUUID);
+                    return new RuntimeException("User not found");
+                });
+
+        logger.info("User found: {}", user.getId());
+
         Url url = new Url();
         url.setLongUrl(urlRequest.getLongUrl());
         url.setUser(user);
@@ -48,6 +65,7 @@ public class UrlService {
         url.setShortUrl(generateShortUrl(urlRequest.getLongUrl()));
 
         Url savedUrl = urlRepository.save(url);
+        logger.info("URL shortened successfully: {}", savedUrl.getShortUrl());
         return ResponseEntity.ok(ApiResponse.success("URL shortened successfully", savedUrl));
     }
 

@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +28,7 @@ public class ApiResponse<T> {
     private LocalDateTime timestamp;
     private Integer statusCode;
 
+    private static final Logger logger =LoggerFactory.getLogger(ApiResponse.class);
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -50,6 +53,14 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static <T> ApiResponse<T> error(String message, T data) {
+        ApiResponse<T> response = new ApiResponse<>();
+        response.setSuccess(false);
+        response.setMessage(message != null ? message : "An error occurred");
+        response.setData(data);
+        return response;
+    }
+
     public static <T> ApiResponse<T> error(String message, HttpStatus status) {
         return ApiResponse.<T>builder()
                 .success(false)
@@ -59,6 +70,7 @@ public class ApiResponse<T> {
                 .build();
     }
 
+
     public static <T> ResponseEntity<ApiResponse<T>> of(T data) {
         return ResponseEntity.ok(success(data));
     }
@@ -67,7 +79,10 @@ public class ApiResponse<T> {
         return ResponseEntity.ok(success(message, data));
     }
 
+
     public static <T> ResponseEntity<ApiResponse<T>> error(String message, HttpStatus status, T data) {
+        logger.error("Error occurred: {} - Status: {}, Data: {}", message, status, data);
+
         ApiResponse<T> response = ApiResponse.<T>builder()
                 .success(false)
                 .message(message)
@@ -75,8 +90,11 @@ public class ApiResponse<T> {
                 .timestamp(LocalDateTime.now())
                 .statusCode(status.value())
                 .build();
+
         return new ResponseEntity<>(response, status);
     }
+
+
 
     @Override
     public String toString() {
