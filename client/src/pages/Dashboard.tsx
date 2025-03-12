@@ -24,6 +24,7 @@ const CreateContent: React.FC = () => {
   const [shortenedUrl, setShortenedUrl] = useState<string>("");
 
   const handleShortenUrl = async () => {
+    console.log("the click on me : handleShortenUrl ");
     // Validate input
     if (!longUrl || !longUrl.trim()) {
       toast.error("Please enter a valid URL", {
@@ -37,7 +38,8 @@ const CreateContent: React.FC = () => {
     try {
       // Get token from localStorage
       const token = localStorage.getItem("token");
-      console.log("token",token)
+      console.log("token", token);
+      console.log(`hitted url :${BaseUrl}/urls/shorten`);
 
       // Make API request
       const response: any = await axios.post(
@@ -48,10 +50,11 @@ const CreateContent: React.FC = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
-      console.log("can you reach here");     
+      console.log("can you reach here");
       if (response.status === 200 || response.status === 201) {
         // Display success message
         toast.success("URL shortened successfully!", {
@@ -206,12 +209,12 @@ const SettingsContent: React.FC = () => (
           defaultValue="example@bitly.com"
           style={{ marginBottom: "16px" }}
         />
-        <Button
+        <StyledButton
           type="primary"
           style={{ backgroundColor: "#ee6123", border: "none" }}
         >
           Update Profile
-        </Button>
+        </StyledButton>
       </SettingsSection>
 
       <SettingsSection title="Security">
@@ -361,51 +364,51 @@ const Dashboard: React.FC = () => {
   console.log("User Data:", userData);
 
   const handleLogout = async () => {
-  try {
-    console.log("Attempting logout...");
+    try {
+      console.log("Attempting logout...");
 
-    // Get the token from localStorage
-    const token = localStorage.getItem("token");
+      // Get the token from localStorage
+      const token = localStorage.getItem("token");
 
-    // Set up the request with the Authorization header
-    const response = await axios.post(
-      `${BaseUrl}/auth/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      // Set up the request with the Authorization header
+      const response = await axios.post(
+        `${BaseUrl}/auth/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Logout successful", response);
+        localStorage.removeItem("token"); // Clear the token from localStorage
+
+        toast.success("Logout successful! Redirecting...", {
+          position: "top-right",
+        });
+
+        setTimeout(() => {
+          navigate("/");
+        }, 3000); // 3 seconds delay// Navigate to the root path
       }
-    );
+    } catch (error) {
+      console.error("Logout Error:", error);
 
-    if (response.status === 200) {
-      console.log("Logout successful", response);
-      localStorage.removeItem("token"); // Clear the token from localStorage
+      // Even if the request fails, we might want to log the user out locally
+      localStorage.removeItem("token");
 
-      toast.success("Logout successful! Redirecting...", {
-        position: "top-right",
-      });
+      toast.error(
+        "Logout process encountered an issue, but you've been logged out locally.",
+        {
+          position: "top-right",
+        }
+      );
 
-      setTimeout(() => {
-        navigate("/");
-      }, 3000); // 3 seconds delay// Navigate to the root path
+      navigate("/"); // Navigate to the root path anyway
     }
-  } catch (error) {
-    console.error("Logout Error:", error);
-
-    // Even if the request fails, we might want to log the user out locally
-    localStorage.removeItem("token");
-
-    toast.error(
-      "Logout process encountered an issue, but you've been logged out locally.",
-      {
-        position: "top-right",
-      }
-    );
-
-    navigate("/"); // Navigate to the root path anyway
-  }
-};
+  };
 
   // Then use it in your dropdown items array
   const dropdownItems = [
@@ -553,8 +556,6 @@ export default Dashboard;
 
 /* Styled Components */
 
-
-
 const Container = styled.div`
   padding: 24px;
   background: #fff;
@@ -567,7 +568,6 @@ const Subtitle = styled.h3`
   margin-top: 16px;
   color: #666;
 `;
-
 
 const ResultSection = styled.div`
   margin-top: 24px;
@@ -601,12 +601,25 @@ const ResultInput = styled(Input)`
 `;
 
 const StyledButton = styled(Button)`
-  background-color: #ee6123;
-  border: none;
+  background-color: #ee6123 !important;
+  color: white !important;
+  border: none !important;
+  margin-top: 10px;
+
   &:hover {
-    background-color: #d4551a;
+    color: #ee6123 !important;
+    border: 1px solid #ee6123 !important;
+    background-color: transparent !important;
+  }
+
+  &:focus,
+  &:active {
+    outline: none !important;
+    box-shadow: none !important;
   }
 `;
+
+
 
 const FormSection = styled.div`
   margin-top: 24px;
