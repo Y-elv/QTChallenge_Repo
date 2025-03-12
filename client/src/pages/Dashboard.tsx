@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Layout, Button, Tooltip, Input, Dropdown } from "antd";
@@ -35,46 +35,49 @@ const CreateContent: React.FC = () => {
 
     setLoading(true);
 
+    // Make API request
     try {
-      // Get token from localStorage
       const token = localStorage.getItem("token");
-      console.log("token", token);
-      console.log(`hitted url :${BaseUrl}/urls/shorten`);
+      console.log(`token: ${token}`);
+      console.log(`Making request to: ${BaseUrl}/urls/shorten`); // Debugging URL
 
-      // Make API request
       const response: any = await axios.post(
         `${BaseUrl}/urls/shorten`,
-        {
-          longUrl,
-        },
+        { longUrl },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token ? `Bearer ${token}` : "", // Ensure correct format
             "Content-Type": "application/json",
+            Accept: "application/json",
           },
         }
       );
-      console.log("can you reach here");
+
+      console.log("Response received:", response.data);
+
       if (response.status === 200 || response.status === 201) {
-        // Display success message
         toast.success("URL shortened successfully!", {
           position: "top-right",
         });
 
-        // Store the shortened URL
-        setShortenedUrl(response.data.data.shortUrl);
+        setShortenedUrl(response.data?.data?.shortUrl || ""); // Avoid undefined errors
+        setLongUrl("");
       }
     } catch (error: any) {
       console.error("Error shortening URL:", error);
 
-      // Display error message
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to shorten URL. Please try again.",
-        {
+      if (error.code === "ERR_NETWORK") {
+        toast.error(
+          "Network error. Please check your connection or try again.",
+          {
+            position: "top-right",
+          }
+        );
+      } else {
+        toast.error(error.response?.data?.message || "Failed to shorten URL.", {
           position: "top-right",
-        }
-      );
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -86,21 +89,23 @@ const CreateContent: React.FC = () => {
       <Subtitle>
         Paste a long URL to create a shorter, more manageable link:
       </Subtitle>
-      <FormSection>
-        <StyledTextArea
-          placeholder="https://example.com/very/long/url/that/needs/shortening"
-          rows={4}
-          value={longUrl}
-          onChange={(e) => setLongUrl(e.target.value)}
-        />
-        <StyledButton
-          type="primary"
-          onClick={handleShortenUrl}
-          loading={loading}
-        >
-          Shorten URL
-        </StyledButton>
-      </FormSection>
+        <FormSection>
+          <StyledInput
+            placeholder="https://example.com/very/long/url/that/needs/shortening"
+            value={longUrl}
+            onInput={(e: any) => {
+              console.log("Input event value:", e.target.value);
+              setLongUrl(e.target.value);
+            }}
+          />
+          <StyledButton
+            type="primary"
+            onClick={handleShortenUrl}
+            disabled={loading}
+          >
+            {loading ? "Shortening..." : "Shorten URL"}
+          </StyledButton>
+        </FormSection>
 
       {shortenedUrl && (
         <ResultSection>
@@ -837,4 +842,14 @@ const ContentContainer = styled(Content)`
   min-height: 280px;
   background: white;
   border-radius: 12px;
+`;
+const StyledInput = styled(Input.TextArea)`
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #d9d9d9;
+  &:focus {
+    border-color: #ee6123;
+    box-shadow: 0 0 0 2px rgba(238, 97, 35, 0.2);
+  }
 `;
