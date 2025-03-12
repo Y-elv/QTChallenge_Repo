@@ -18,25 +18,98 @@ import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 // Enhanced content components for each menu item
-const CreateContent: React.FC = () => (
-  <div>
-    <h2>Create New Link</h2>
-    <p>Paste a long URL to create a shorter, more manageable link:</p>
-    <div style={{ marginTop: "20px", maxWidth: "600px" }}>
-      <Input.TextArea
-        placeholder="https://example.com/very/long/url/that/needs/shortening"
-        rows={4}
-        style={{ marginBottom: "16px" }}
-      />
-      <Button
-        type="primary"
-        style={{ backgroundColor: "#ee6123", border: "none" }}
-      >
-        Shorten URL
-      </Button>
-    </div>
-  </div>
-);
+const CreateContent: React.FC = () => {
+  const [longUrl, setLongUrl] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [shortenedUrl, setShortenedUrl] = useState<string>("");
+
+  const handleShortenUrl = async () => {
+    // Validate input
+    if (!longUrl || !longUrl.trim()) {
+      toast.error("Please enter a valid URL", {
+        position: "top-right",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      console.log("token",token)
+
+      // Make API request
+      const response: any = await axios.post(
+        `${BaseUrl}/urls/shorten`,
+        {
+          longUrl,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("can you reach here");     
+      if (response.status === 200 || response.status === 201) {
+        // Display success message
+        toast.success("URL shortened successfully!", {
+          position: "top-right",
+        });
+
+        // Store the shortened URL
+        setShortenedUrl(response.data.data.shortUrl);
+      }
+    } catch (error: any) {
+      console.error("Error shortening URL:", error);
+
+      // Display error message
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to shorten URL. Please try again.",
+        {
+          position: "top-right",
+        }
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <h2>Create New Link</h2>
+      <Subtitle>
+        Paste a long URL to create a shorter, more manageable link:
+      </Subtitle>
+      <FormSection>
+        <StyledTextArea
+          placeholder="https://example.com/very/long/url/that/needs/shortening"
+          rows={4}
+          value={longUrl}
+          onChange={(e) => setLongUrl(e.target.value)}
+        />
+        <StyledButton
+          type="primary"
+          onClick={handleShortenUrl}
+          loading={loading}
+        >
+          Shorten URL
+        </StyledButton>
+      </FormSection>
+
+      {shortenedUrl && (
+        <ResultSection>
+          <ResultTitle>Your Shortened URL:</ResultTitle>
+          <ResultActions>
+            <ResultInput value={shortenedUrl} readOnly />
+          </ResultActions>
+        </ResultSection>
+      )}
+    </Container>
+  );
+};
 
 const AnalyticsContent: React.FC = () => (
   <div>
@@ -479,6 +552,77 @@ const Dashboard: React.FC = () => {
 export default Dashboard;
 
 /* Styled Components */
+
+
+
+const Container = styled.div`
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+// Add missing Subtitle component
+const Subtitle = styled.h3`
+  margin-top: 16px;
+  color: #666;
+`;
+
+
+const ResultSection = styled.div`
+  margin-top: 24px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const ResultTitle = styled.h3`
+  margin-bottom: 8px;
+  color: #333;
+`;
+
+const ResultActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ResultInput = styled(Input)`
+  flex-grow: 1;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #d9d9d9;
+  &:focus {
+    border-color: #ee6123;
+    box-shadow: 0 0 0 2px rgba(238, 97, 35, 0.2);
+  }
+`;
+
+const StyledButton = styled(Button)`
+  background-color: #ee6123;
+  border: none;
+  &:hover {
+    background-color: #d4551a;
+  }
+`;
+
+const FormSection = styled.div`
+  margin-top: 24px;
+`;
+
+const StyledTextArea = styled(Input.TextArea)`
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #d9d9d9;
+  &:focus {
+    border-color: #ee6123;
+    box-shadow: 0 0 0 2px rgba(238, 97, 35, 0.2);
+  }
+`;
+
 const LayoutContainer = styled(Layout)`
   height: 100vh;
 `;
