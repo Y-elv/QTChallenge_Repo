@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import { Layout, Button, Tooltip, Input, Dropdown } from "antd";
 import { MdOutlineAdd } from "react-icons/md";
 import { SiSimpleanalytics } from "react-icons/si";
@@ -8,379 +12,17 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { CiSettings } from "react-icons/ci";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { CloseOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import BaseUrl from "../utils/config";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
+import CreateContent from "../components/CreateContent"; 
+import AnalyticsContent from "../components/AnalyticsContent"; 
+import NotificationContent from "../components/NotificationContent"; 
+import SettingsContent from "../components/SettingsContent"; 
 
 const { Header, Sider, Content } = Layout;
-
-// Enhanced content components for each menu item
-const CreateContent: React.FC = () => {
-  const [longUrl, setLongUrl] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [shortenedUrl, setShortenedUrl] = useState<string>("");
-
-  const handleShortenUrl = async () => {
-    console.log("the click on me : handleShortenUrl ");
-    // Validate input
-    if (!longUrl || !longUrl.trim()) {
-      toast.error("Please enter a valid URL", {
-        position: "top-right",
-      });
-      return;
-    }
-
-    setLoading(true);
-
-    // Make API request
-    try {
-      const token = localStorage.getItem("token");
-      console.log(`token: ${token}`);
-      console.log(`Making request to: ${BaseUrl}/urls/shorten`); // Debugging URL
-
-      const response: any = await axios.post(
-        `${BaseUrl}/urls/shorten`,
-        { longUrl },
-        {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "", // Ensure correct format
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
-
-      console.log("Response received:", response.data);
-
-      if (response.status === 200 || response.status === 201) {
-        toast.success("URL shortened successfully!", {
-          position: "top-right",
-        });
-
-        setShortenedUrl(response.data?.data?.shortUrl || ""); // Avoid undefined errors
-        setLongUrl("");
-      }
-    } catch (error: any) {
-      console.error("Error shortening URL:", error);
-
-      if (error.code === "ERR_NETWORK") {
-        toast.error(
-          "Network error. Please check your connection or try again.",
-          {
-            position: "top-right",
-          }
-        );
-      } else {
-        toast.error(error.response?.data?.message || "Failed to shorten URL.", {
-          position: "top-right",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Container>
-      <h2>Create New Link</h2>
-      <Subtitle>
-        Paste a long URL to create a shorter, more manageable link:
-      </Subtitle>
-      <FormSection>
-        <StyledInput
-          placeholder="https://example.com/very/long/url/that/needs/shortening"
-          value={longUrl}
-          onInput={(e: any) => {
-            console.log("Input event value:", e.target.value);
-            setLongUrl(e.target.value);
-          }}
-        />
-        <StyledButton
-          type="primary"
-          onClick={handleShortenUrl}
-          disabled={loading}
-        >
-          {loading ? "Shortening..." : "Shorten URL"}
-        </StyledButton>
-      </FormSection>
-
-      {shortenedUrl && (
-        <ResultSection>
-          <ResultTitle>Your Shortened URL:</ResultTitle>
-          <ResultActions>
-            <ResultInput value={shortenedUrl} readOnly />
-          </ResultActions>
-        </ResultSection>
-      )}
-    </Container>
-  );
-};
-
-const fetchTotalClicks = async (): Promise<number> => {
-  const token = localStorage.getItem("token"); // Retrieve token from localStorage
-
-  const response: any = await axios.get(`${BaseUrl}/urls`, {
-    headers: {
-      Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (response.status !== 200) {
-    throw new Error("Failed to fetch total clicks");
-  }
-
-  const urlCount = response.data.data.length;
-  console.log("urlCount", urlCount); // Log the data to the console) // Count the number of URLs
-  return urlCount;
-};
-
-const fetchUniqueVisitors = async (): Promise<number> => {
-  // Replace with actual API call
-  const response = await fetch("/api/unique-visitors");
-  const data = await response.json();
-  return data.uniqueVisitors;
-};
-
-const fetchActiveLinks = async (): Promise<number> => {
-  // Replace with actual API call
-  const response = await fetch("/api/active-links");
-  const data = await response.json();
-  return data.activeLinks;
-};
-
-const AnalyticsContent: React.FC = () => {
-  const [totalClicks, setTotalClicks] = useState(0);
-  const [uniqueVisitors, setUniqueVisitors] = useState(0);
-  const [activeLinks, setActiveLinks] = useState(0);
-
-   useEffect(() => {
-     const fetchData = async () => {
-       try {
-         const clicks = await fetchTotalClicks();
-         console.log("Total Clicks: ", clicks);
-         setTotalClicks(clicks);
-
-         const visitors = await fetchUniqueVisitors();
-         console.log("Unique Visitors: ", visitors);
-         setUniqueVisitors(visitors);
-
-         const links = await fetchActiveLinks();
-         console.log("Active Links: ", links);
-         setActiveLinks(links);
-       } catch (error) {
-         console.error("Error fetching analytics data:", error);
-       }
-     };
-
-     fetchData();
-   }, []);
-
-  return (
-    <div>
-      <h2>Link Analytics</h2>
-      <p>Track the performance of your shortened links:</p>
-      <div style={{ marginTop: "24px" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "16px",
-          }}
-        >
-          <StatCard title="Total Links" value={totalClicks} />
-          <StatCard title="Unique Visitors" value={uniqueVisitors} />
-          <StatCard title="Active Links" value={activeLinks} />
-        </div>
-        <div
-          style={{
-            marginTop: "32px",
-            height: "300px",
-            background: "#f9f9f9",
-            borderRadius: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <p>Click data visualization would appear here</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const NotificationContent: React.FC = () => (
-  <div>
-    <h2>Notifications</h2>
-    <p>Stay updated with the latest alerts and information:</p>
-    <div style={{ marginTop: "20px" }}>
-      {[
-        {
-          id: 1,
-          title: "Link milestone reached",
-          message: "Your business link has reached 1,000 clicks!",
-          time: "2 hours ago",
-          read: false,
-        },
-        {
-          id: 2,
-          title: "Weekly report available",
-          message: "Your weekly analytics report is now available.",
-          time: "1 day ago",
-          read: true,
-        },
-        {
-          id: 3,
-          title: "Security alert",
-          message: "New login detected from London, UK.",
-          time: "2 days ago",
-          read: true,
-        },
-      ].map((notification) => (
-        <NotificationItem
-          key={notification.id}
-          read={notification.read}
-          title={notification.title}
-          message={notification.message}
-          time={notification.time}
-        />
-      ))}
-    </div>
-  </div>
-);
-
-const SettingsContent: React.FC = () => (
-  <div>
-    <h2>Account Settings</h2>
-    <p>Manage your account preferences and configurations:</p>
-    <div style={{ marginTop: "24px", maxWidth: "700px" }}>
-      <SettingsSection title="Profile Information">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          <Input placeholder="First Name" defaultValue="MUGISHA" />
-          <Input placeholder="Last Name" defaultValue="ELVIS" />
-        </div>
-        <Input
-          placeholder="Email Address"
-          defaultValue="example@bitly.com"
-          style={{ marginBottom: "16px" }}
-        />
-        <StyledButton
-          type="primary"
-          style={{ backgroundColor: "#ee6123", border: "none" }}
-        >
-          Update Profile
-        </StyledButton>
-      </SettingsSection>
-
-      <SettingsSection title="Security">
-        <Button>Change Password</Button>
-        <Button style={{ marginLeft: "12px" }}>
-          Enable Two-Factor Authentication
-        </Button>
-      </SettingsSection>
-
-      <SettingsSection title="Notifications">
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <label style={{ display: "flex", alignItems: "center" }}>
-            <input
-              type="checkbox"
-              defaultChecked
-              style={{ marginRight: "8px" }}
-            />
-            Email notifications
-          </label>
-        </div>
-      </SettingsSection>
-    </div>
-  </div>
-);
-
-// Helper components for the content sections
-interface StatCardProps {
-  title: string;
-  value: string | number;
-}
-
-const StatCard: React.FC<StatCardProps> = ({ title, value }) => (
-  <div
-    style={{
-      background: "white",
-      border: "1px solid #eee",
-      borderRadius: "8px",
-      padding: "16px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    }}
-  >
-    <h3 style={{ margin: 0, fontSize: "14px", color: "#666" }}>{title}</h3>
-    <p style={{ margin: "8px 0 0 0", fontSize: "24px", fontWeight: "bold" }}>
-      {value}
-    </p>
-  </div>
-);
-
-interface NotificationItemProps {
-  read: boolean;
-  title: string;
-  message: string;
-  time: string;
-}
-
-const NotificationItem: React.FC<NotificationItemProps> = ({
-  read,
-  title,
-  message,
-  time,
-}) => (
-  <div
-    style={{
-      padding: "16px",
-      borderRadius: "8px",
-      marginBottom: "12px",
-      background: read ? "white" : "#f0f7ff",
-      border: "1px solid #eee",
-    }}
-  >
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <h3 style={{ margin: 0, fontSize: "16px" }}>{title}</h3>
-      <span style={{ fontSize: "12px", color: "#666" }}>{time}</span>
-    </div>
-    <p style={{ margin: "8px 0 0 0", color: "#333" }}>{message}</p>
-  </div>
-);
-
-interface SettingsSectionProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-const SettingsSection: React.FC<SettingsSectionProps> = ({
-  title,
-  children,
-}) => (
-  <div style={{ marginBottom: "32px" }}>
-    <h3
-      style={{
-        borderBottom: "1px solid #eee",
-        paddingBottom: "12px",
-        marginBottom: "16px",
-      }}
-    >
-      {title}
-    </h3>
-    {children}
-  </div>
-);
 
 const Dashboard: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -457,7 +99,7 @@ const Dashboard: React.FC = () => {
 
         setTimeout(() => {
           navigate("/");
-        }, 3000); // 3 seconds delay// Navigate to the root path
+        }, 3000); // 3 seconds delay
       }
     } catch (error) {
       console.error("Logout Error:", error);
@@ -589,7 +231,7 @@ const Dashboard: React.FC = () => {
                 items: dropdownItems.map((item) => ({
                   key: item.key,
                   label: item.label,
-                  onClick: item.onClick, // Add this line to pass the onClick handler
+                  onClick: item.onClick,
                 })),
               }}
               trigger={["click"]}
@@ -622,75 +264,8 @@ export default Dashboard;
 
 /* Styled Components */
 
-const Container = styled.div`
-  padding: 24px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-`;
-
-// Add missing Subtitle component
-const Subtitle = styled.h3`
-  margin-top: 16px;
-  color: #666;
-`;
-
-const ResultSection = styled.div`
-  margin-top: 24px;
-  padding: 16px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const ResultTitle = styled.h3`
-  margin-bottom: 8px;
-  color: #333;
-`;
-
-const ResultActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const ResultInput = styled(Input)`
-  flex-grow: 1;
-  border-radius: 8px;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #d9d9d9;
-  &:focus {
-    border-color: #ee6123;
-    box-shadow: 0 0 0 2px rgba(238, 97, 35, 0.2);
-  }
-`;
-
-const StyledButton = styled(Button)`
-  background-color: #ee6123 !important;
-  color: white !important;
-  border: none !important;
-  margin-top: 10px;
-
-  &:hover {
-    color: #ee6123 !important;
-    border: 1px solid #ee6123 !important;
-    background-color: transparent !important;
-  }
-
-  &:focus,
-  &:active {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-`;
-
-const FormSection = styled.div`
-  margin-top: 24px;
-`;
-
 const LayoutContainer = styled(Layout)`
-  height: 100vh;
+  height: 102vh;
 `;
 
 const Sidebar = styled(Sider)`
@@ -767,7 +342,6 @@ const MainLayout = styled(Layout)`
   background: #f5f5f5;
 `;
 
-// Updated Header components with 3-part layout
 const HeaderContainer = styled(Header)`
   padding: 0 16px;
   background: white;
@@ -890,14 +464,4 @@ const ContentContainer = styled(Content)`
   min-height: 280px;
   background: white;
   border-radius: 12px;
-`;
-const StyledInput = styled(Input.TextArea)`
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #d9d9d9;
-  &:focus {
-    border-color: #ee6123;
-    box-shadow: 0 0 0 2px rgba(238, 97, 35, 0.2);
-  }
 `;
