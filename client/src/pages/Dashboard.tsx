@@ -119,38 +119,99 @@ const CreateContent: React.FC = () => {
   );
 };
 
-const AnalyticsContent: React.FC = () => (
-  <div>
-    <h2>Link Analytics</h2>
-    <p>Track the performance of your shortened links:</p>
-    <div style={{ marginTop: "24px" }}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "16px",
-        }}
-      >
-        <StatCard title="Total Clicks" value="0" />
-        <StatCard title="Unique Visitors" value="0" />
-        <StatCard title="Active Links" value="0" />
-      </div>
-      <div
-        style={{
-          marginTop: "32px",
-          height: "300px",
-          background: "#f9f9f9",
-          borderRadius: "8px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <p>Click data visualization would appear here</p>
+const fetchTotalClicks = async (): Promise<number> => {
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+  const response: any = await axios.get(`${BaseUrl}/urls`, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error("Failed to fetch total clicks");
+  }
+
+  const urlCount = response.data.data.length;
+  console.log("urlCount", urlCount); // Log the data to the console) // Count the number of URLs
+  return urlCount;
+};
+
+const fetchUniqueVisitors = async (): Promise<number> => {
+  // Replace with actual API call
+  const response = await fetch("/api/unique-visitors");
+  const data = await response.json();
+  return data.uniqueVisitors;
+};
+
+const fetchActiveLinks = async (): Promise<number> => {
+  // Replace with actual API call
+  const response = await fetch("/api/active-links");
+  const data = await response.json();
+  return data.activeLinks;
+};
+
+const AnalyticsContent: React.FC = () => {
+  const [totalClicks, setTotalClicks] = useState(0);
+  const [uniqueVisitors, setUniqueVisitors] = useState(0);
+  const [activeLinks, setActiveLinks] = useState(0);
+
+   useEffect(() => {
+     const fetchData = async () => {
+       try {
+         const clicks = await fetchTotalClicks();
+         console.log("Total Clicks: ", clicks);
+         setTotalClicks(clicks);
+
+         const visitors = await fetchUniqueVisitors();
+         console.log("Unique Visitors: ", visitors);
+         setUniqueVisitors(visitors);
+
+         const links = await fetchActiveLinks();
+         console.log("Active Links: ", links);
+         setActiveLinks(links);
+       } catch (error) {
+         console.error("Error fetching analytics data:", error);
+       }
+     };
+
+     fetchData();
+   }, []);
+
+  return (
+    <div>
+      <h2>Link Analytics</h2>
+      <p>Track the performance of your shortened links:</p>
+      <div style={{ marginTop: "24px" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "16px",
+          }}
+        >
+          <StatCard title="Total Links" value={totalClicks} />
+          <StatCard title="Unique Visitors" value={uniqueVisitors} />
+          <StatCard title="Active Links" value={activeLinks} />
+        </div>
+        <div
+          style={{
+            marginTop: "32px",
+            height: "300px",
+            background: "#f9f9f9",
+            borderRadius: "8px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <p>Click data visualization would appear here</p>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const NotificationContent: React.FC = () => (
   <div>
@@ -248,7 +309,7 @@ const SettingsContent: React.FC = () => (
 // Helper components for the content sections
 interface StatCardProps {
   title: string;
-  value: string;
+  value: string | number;
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value }) => (
