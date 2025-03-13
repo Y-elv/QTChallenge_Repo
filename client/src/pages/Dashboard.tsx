@@ -265,7 +265,7 @@ export default Dashboard;
 /* Styled Components */
 
 const LayoutContainer = styled(Layout)`
-  height: 102vh;
+  height: 100vh;
 `;
 
 const Sidebar = styled(Sider)`

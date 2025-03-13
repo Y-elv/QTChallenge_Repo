@@ -92,13 +92,13 @@ const AnalyticsContent: React.FC = () => {
           }}
         >
           <StatCard title="Total Links" value={totalClicks} />
-          <StatCard title="Unique Visitors" value={uniqueVisitors} />
+          <StatCard title="Total Clicks" value={uniqueVisitors} />
           <StatCard title="Active Links" value={activeLinks} />
         </div>
         <div
           style={{
-            marginTop: "25px",
-            height: "270px",
+            marginTop: "10px",
+            height: "250px",
             background: "#f9f9f9",
             borderRadius: "8px",
             display: "flex",
@@ -119,7 +119,7 @@ export default AnalyticsContent;
 
 const Container = styled.div`
   padding: 18px;
-  height: 78vh;
+  height: 76vh;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

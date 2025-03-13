@@ -76,7 +76,7 @@ export default SettingsContent;
 
 const Container = styled.div`
   padding: 24px;
-  height:78vh;
+  height:77vh;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -85,7 +85,7 @@ const Container = styled.div`
 
 
 const SectionContainer = styled.div`
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 
   h3 {
     border-bottom: 1px solid #eee;
