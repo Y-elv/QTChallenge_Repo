@@ -131,9 +131,9 @@ const AnalyticsContent: React.FC = () => (
           gap: "16px",
         }}
       >
-        <StatCard title="Total Clicks" value="2,431" />
-        <StatCard title="Unique Visitors" value="1,892" />
-        <StatCard title="Active Links" value="17" />
+        <StatCard title="Total Clicks" value="0" />
+        <StatCard title="Unique Visitors" value="0" />
+        <StatCard title="Active Links" value="0" />
       </div>
       <div
         style={{

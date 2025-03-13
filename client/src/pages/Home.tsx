@@ -24,11 +24,12 @@ const Home: React.FC = () => {
   };
 
   const handleGetLink = (): void => {
+    console.log("am in handleGetLink ()");
     const token = localStorage.getItem("token");
 
     if (token) {
       // User is logged in, proceed with getting the link
-      console.log("Getting user link...");
+      console.log("Getting user link.2..");
       // Add your link generation logic here
     } else {
       // User is not logged in
